@@ -50,7 +50,7 @@ app.post('/tournaments', async (req, res) => {
         
         // Fetch tournaments for the selected session from the database
         const result = await pool.query(
-            'SELECT t.t_name, ht.ht_position, ht.ht_winnings FROM t_tournaments t ' +
+            'SELECT t.t_name, ht.ht_position, ht.ht_winnings, t.t_buyin FROM t_tournaments t ' +
             'JOIN ht_hasTournament ht ON t.t_id = ht.ht_t_id ' +
             'WHERE ht.ht_s_id = $1',
             [selectedId]

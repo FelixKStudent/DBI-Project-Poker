@@ -13,7 +13,7 @@
   <h1>Tournaments for Session <%= date.toLocaleDateString() %></h1>
   <ul>
     <% tournaments.forEach(tournament => { %>
-      <li>Name: <%= tournament.t_name %>, Position: <%= tournament.ht_position %>, Winnings: <%= tournament.ht_winnings %></li>
+      <li>Name: <%= tournament.t_name %>, Position: <%= tournament.ht_position %>, Winnings: <%= tournament.ht_winnings %>, BuyIn: <%= tournament.t_buyin %></li>
     <% }); %>
   </ul>
 </body>
