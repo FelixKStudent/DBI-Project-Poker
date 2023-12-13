@@ -1,16 +1,9 @@
 from typing import TypedDict
-from pymongo import MongoClient
-from bson import ObjectId
-from typing import List  # Import List type from typing module
+from typing import List
 from datetime import datetime
 
 class Site(TypedDict):
     name: str
-
-class Transaction(TypedDict):
-    amount: int
-    date: datetime
-    site: Site
 
 class Format(TypedDict):
     name: str
@@ -25,7 +18,7 @@ class Tournament(TypedDict):
 class SessionStats(TypedDict):
     winnings: int
     position: int
-    tournaments: Tournament
+    tournament: Tournament
 
 class Session(TypedDict):
     date: datetime
