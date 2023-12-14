@@ -3,22 +3,22 @@ from faker import Faker
 import random
 
 class DataFaker():
-    def __init__(self):
+    def __init__(self, numsSites, numFormats, numSessions, numTournaments, formatsPerTournament, tournamentsPerSession, numTransactions):
         self.fake = Faker()
 
-        self.numSites = 5
-        self.numFormats = 10
-        self.numSessions = 10000
-        self.numTournaments = 100
-        self.formatsPerTournament = 2
-        self.tournamentsPerSession = 5
-        self.numTransactions = 10
+        self.numSites = numsSites
+        self.numFormats = numFormats
+        self.numSessions = numSessions
+        self.numTournaments = numTournaments
+        self.formatsPerTournament = formatsPerTournament
+        self.tournamentsPerSession = tournamentsPerSession
+        self.numTransactions = numTransactions
 
         self.si_sites_data = [(self.fake.word(),) for _ in range(self.numSites)]
         self.f_formats_data = [(self.fake.word(),) for _ in range(self.numFormats)]
 
         current_date = datetime.now().date()
-        self.s_sessions_data = [(date, random.randint(1, 14)) for date in self.generate_unique_dates(current_date, self.numSessions)]
+        self.s_sessions_data = [(date, random.randint(1, 10)) for date in self.generate_unique_dates(current_date, self.numSessions)]
 
         self.t_tournaments_data = [
             (self.fake.word(), random.randint(1, 100), random.randint(0, 10000), random.randint(1, self.numSites))
