@@ -57,28 +57,36 @@ class MongoUtils():
                 stats=[tournament_instances[x-1] for x in tournament_data]
             )
             mongo_documents.append(session_instance)
-        print("Mongo faker done.")
         return mongo_documents
 
     def insert_documents(self):
         self.mycol.insert_many(self.documents)
-        print("MongoDB data insertion completed")
 
     def clean_database(self):
         self.mycol.delete_many({})
-        print("MongoDB data deletion completed")
 
     def find_all(self):
-        return self.mycol.find()
+        result = list(self.mycol.find({}))
+        return result
 
     def find_by_session_length(self, length):
-        return self.mycol.find({"length": length})
+        result = list(self.mycol.find({"length": length}))
+        return result
 
     def find_by_session_length_projection(self, length):
-        return self.mycol.find({"length": length}, {"_id": 0, "date": 1, "length": 0, "stats": 1})
+        return list(self.mycol.find({"length": length},{"_id": 0, "date": 1, "stats.winnings": 1}))
+
+    def find_by_session_length_projection_sort(self, length):
+        return list(self.mycol.find({"length": length},{"_id": 0, "date": 1, "stats.winnings": 1}).sort("date", pymongo.DESCENDING))
 
     def update_session_length(self):
         self.mycol.update_many({}, {"$inc": {"length": 1}})
+
+    def update_session_length_by_length(self, length,):
+        self.mycol.update_one({"length": length}, {"$inc": {"length": 1}})
+
+    def delete_all(self):
+        self.mycol.delete_many({})
 
 
 from model import *

@@ -12,7 +12,6 @@ class SqlUtils():
             password="obama")
         self.cur = self.conn.cursor()
 
-        print("SQL utils initialized.")
 
     def clean_database(this):
         this.cur.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';")
@@ -29,8 +28,6 @@ class SqlUtils():
 
         # Commit the changes to apply the table creations
         this.conn.commit()
-
-        print("Database cleaned.")
 
     def insert_faker_data(this):
         for i in this.faker.si_sites_data:
@@ -70,7 +67,6 @@ class SqlUtils():
             this.cur.execute(sql, i)
         this.conn.commit()
 
-        print("SQL data insertion completed")
 
     def find_all(this):
         this.cur.execute("SELECT * FROM s_sessions s JOIN ht_hasTournament ht ON s.s_id = ht.ht_s_id JOIN t_tournaments t ON ht.ht_t_id = t.t_id JOIN hf_hasFormat hf ON t.t_id = hf.hf_t_id JOIN f_formats f ON hf.hf_f_id = f.f_id JOIN si_sites si ON t.t_si_site = si.si_id;")
@@ -81,9 +77,27 @@ class SqlUtils():
         return this.cur.fetchall()
 
     def find_by_session_length_projection(self, length):
-        self.cur.execute(f"SELECT s_id, s_date, s_length FROM s_sessions WHERE s_length = {length};")
+        self.cur.execute(f"SELECT s_date, ht.ht_winnings FROM s_sessions s inner join ht_hasTournament ht on s.s_id = ht.ht_s_id WHERE s_length = {length};")
+        return self.cur.fetchall()
+
+    def find_by_session_length_projection_sort(self, length):
+        self.cur.execute(f"SELECT s_date, ht.ht_winnings FROM s_sessions s inner join ht_hasTournament ht on s.s_id = ht.ht_s_id WHERE s_length = {length} ORDER BY s_date ASC;")
         return self.cur.fetchall()
 
     def update_session_length(self):
         self.cur.execute(f"UPDATE s_sessions SET s_length = s_length + 1;")
+        self.conn.commit()
+
+    def update_session_length_by_length(self, length):
+        self.cur.execute(f"UPDATE s_sessions SET s_length = s_length + 1 WHERE s_length = {length};")
+        self.conn.commit()
+
+    def delete_all(self):
+        self.cur.execute(f"DELETE FROM hf_hasFormat;")
+        self.cur.execute(f"DELETE FROM ht_hasTournament;")
+        self.cur.execute(f"DELETE FROM t_tournaments;")
+        self.cur.execute(f"DELETE FROM tr_transactions;")
+        self.cur.execute(f"DELETE FROM si_sites;")
+        self.cur.execute(f"DELETE FROM f_formats;")
+        self.cur.execute(f"DELETE FROM s_sessions;")
         self.conn.commit()

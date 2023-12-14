@@ -18,7 +18,7 @@ class DataFaker():
         self.f_formats_data = [(self.fake.word(),) for _ in range(self.numFormats)]
 
         current_date = datetime.now().date()
-        self.s_sessions_data = [(date, random.randint(1, 10)) for date in self.generate_unique_dates(current_date, self.numSessions)]
+        self.s_sessions_data = [(date, random.randint(1, 5)) for date in self.generate_unique_dates(current_date, self.numSessions)]
 
         self.t_tournaments_data = [
             (self.fake.word(), random.randint(1, 100), random.randint(0, 10000), random.randint(1, self.numSites))
