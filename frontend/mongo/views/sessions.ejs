@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sessions by ID</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    form {
+      max-width: 600px;
+      margin: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Sessions by Date</h1>
+  <form action="/tournaments" method="post">
+    <label for="selectedId">Select Session:</label>
+    <select name="selectedId" id="selectedId" onchange="updateSession()">
+      <% sessions.forEach(session => { %>
+        <option value="<%= JSON.stringify(session) %>"><%= session.date.toLocaleDateString() %></option>
+      <% }); %>
+    </select>
+    <br>
+    <br>
+    <div id="output"></div>
+  </form>
+
+  <script>
+    function updateSession() {
+      let select = document.getElementById("selectedId");
+      let session = JSON.parse(select.options[select.selectedIndex].value);
+
+      displaySession(session, document.getElementById("output"));
+    }
+
+    function displaySession(obj, parentElement) {
+      let table = document.createElement("table");
+
+      for (let key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          let row = table.insertRow();
+          let cell1 = row.insertCell(0);
+          let cell2 = row.insertCell(1);
+
+          cell1.textContent = key;
+
+          if (typeof obj[key] === 'object' && obj[key] !== null) {
+            // If the value is an object, create a nested table
+            cell2.appendChild(displayNestedObject(obj[key]));
+          } else {
+            cell2.textContent = obj[key];
+          }
+        }
+      }
+
+      parentElement.innerHTML = ""; // Clear previous content
+      parentElement.appendChild(table);
+    }
+
+    function displayNestedObject(obj) {
+      let nestedTable = document.createElement("table");
+
+      for (let key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          let row = nestedTable.insertRow();
+          let cell1 = row.insertCell(0);
+          let cell2 = row.insertCell(1);
+
+          cell1.textContent = key;
+
+          if (typeof obj[key] === 'object' && obj[key] !== null) {
+            // If the value is an object, create a nested table
+            cell2.appendChild(displayNestedObject(obj[key]));
+          } else {
+            cell2.textContent = obj[key];
+          }
+        }
+      }
+
+      return nestedTable;
+    }
+
+    document.addEventListener("DOMContentLoaded", updateSession);
+  </script>
+</body>
+
+</html>
