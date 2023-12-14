@@ -88,6 +88,9 @@ class MongoUtils():
     def delete_all(self):
         self.mycol.delete_many({})
 
+    def aggregate(self):
+        return list(self.mycol.aggregate([{"$unwind": "$stats"}, {"$group": {"_id": "$stats.tournament.name", "total": {"$sum": "$stats.winnings"}}}]))
+
 
 from model import *
 import pymongo

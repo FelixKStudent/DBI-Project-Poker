@@ -101,3 +101,7 @@ class SqlUtils():
         self.cur.execute(f"DELETE FROM f_formats;")
         self.cur.execute(f"DELETE FROM s_sessions;")
         self.conn.commit()
+
+    def group_by(self):
+        self.cur.execute(f"SELECT t_name, SUM(ht_winnings) FROM t_tournaments t JOIN ht_hasTournament ht ON t.t_id = ht.ht_t_id GROUP BY t_name;")
+        return self.cur.fetchall()
