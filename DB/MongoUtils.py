@@ -51,10 +51,11 @@ class MongoUtils():
         for session_index, tournament_data in self.faker.session_tournaments_mapping.items():
             session_data = self.faker.s_sessions_data[session_index-1]
             session_date = datetime.combine(session_data[0], datetime.min.time())
+            sessionStats = [SessionStats(winnings=random.randint(1, 10000), position=random.randint(1, 2000), tourament=tournament_instances[x-1]) for x in tournament_data]
             session_instance = Session(
                 date=session_date,
                 length=session_data[1],
-                stats=[tournament_instances[x-1] for x in tournament_data]
+                stats=sessionStats
             )
             mongo_documents.append(session_instance)
         return mongo_documents
@@ -90,15 +91,3 @@ class MongoUtils():
 
     def aggregate(self):
         return list(self.mycol.aggregate([{"$unwind": "$stats"}, {"$group": {"_id": "$stats.tournament.name", "total": {"$sum": "$stats.winnings"}}}]))
-
-
-from model import *
-import pymongo
-
-faker = DataFaker(5, 10, 10000, 100, 2, 5, 10)
-
-mongoFaker = MongoUtils(faker)
-
-mongoFaker.clean_database()
-
-mongoFaker.insert_documents()
