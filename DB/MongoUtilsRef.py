@@ -14,7 +14,7 @@ class MongoUtilsRef:
     def __init__(self, faker: Faker):
         myclient = pymongo.MongoClient("mongodb://localhost:27017/")
         self.mydb = myclient["pokerDb"]
-        self.mycol_sessions = self.mydb["sessionsRef"]
+        self.mycol_sessions = self.mydb["sessionStatsRef"]
         self.faker = faker
 
     def convert_to_mongo_documents(self):
@@ -88,42 +88,42 @@ class MongoUtilsRef:
     def find_all(self):
         pipeline = [
             {"$lookup": {
-                "from": "tournamentsRef",  # Replace with the actual name of the tournaments collection
-                "localField": "stats.tournament.$id",
+                "from": "tournamentsRef",
+                "localField": "tournament.$id",
                 "foreignField": "_id",
                 "as": "tournament"
             }},
             {"$lookup": {
-                "from": "sessionsRef",  # Replace with the actual name of the sessions collection
-                "localField": "stats.session.$id",
+                "from": "sessionsRef",
+                "localField": "session.$id",
                 "foreignField": "_id",
                 "as": "session"
             }},
-            {"$project": {"_id": 0, "date": 1, "length": 1, "stats.winnings": 1, "tournament.name": 1, "session.length": 1}}
+            {"$project": {"_id": 1, "winnings": 1, "position": 1, "session.date": 1, "tournament.name": 1}}
         ]
 
-        result = list(self.mycol_sessions.aggregate(pipeline))
+        result = list(self.mydb["sessionStatsRef"].aggregate(pipeline))
         return result
 
     def find_by_session_length(self, length):
         pipeline = [
-            {"$match": {"length": length}},
             {"$lookup": {
-                "from": "tournamentsRef",  # Replace with the actual name of the tournaments collection
-                "localField": "stats.tournament.$id",
+                "from": "tournamentsRef",
+                "localField": "tournament.$id",
                 "foreignField": "_id",
                 "as": "tournament"
             }},
             {"$lookup": {
-                "from": "sessionsRef",  # Replace with the actual name of the sessions collection
-                "localField": "stats.session.$id",
+                "from": "sessionsRef",
+                "localField": "session.$id",
                 "foreignField": "_id",
                 "as": "session"
             }},
-            {"$project": {"_id": 0, "date": 1, "length": 1, "stats.winnings": 1, "tournament.name": 1, "session.length": 1}}
+            {"$match": {"session.length": length}},
+            {"$project": {"_id": 1, "winnings": 1, "position": 1, "session.date": 1, "tournament.name": 1}}
         ]
 
-        result = list(self.mycol_sessions.aggregate(pipeline))
+        result = list(self.mydb["sessionStatsRef"].aggregate(pipeline))
         return result
 
     def update_session_length(self):

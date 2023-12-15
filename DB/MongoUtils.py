@@ -44,14 +44,13 @@ class MongoUtils():
                 site=site_instance,
                 formats=single_format_instances
             )
-            tournament_instances.append(tournament_instance)  # Add to the list
-            # mongo_documents.append(tournament_instance)
+            tournament_instances.append(tournament_instance)
 
-        # Convert Sessions
+        # Convert Session
         for session_index, tournament_data in self.faker.session_tournaments_mapping.items():
             session_data = self.faker.s_sessions_data[session_index-1]
             session_date = datetime.combine(session_data[0], datetime.min.time())
-            sessionStats = [SessionStats(winnings=random.randint(1, 10000), position=random.randint(1, 2000), tourament=tournament_instances[x-1]) for x in tournament_data]
+            sessionStats = [SessionStats(winnings=random.randint(1, 10000), position=random.randint(1, 2000), tournament=tournament_instances[x-1]) for x in tournament_data]
             session_instance = Session(
                 date=session_date,
                 length=session_data[1],
